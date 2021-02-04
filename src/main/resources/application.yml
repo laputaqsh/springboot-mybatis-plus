@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://42.193.112.76:3306/mybatis?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: Qsh115713.
+
+logging:
+  level:
+    root: warn
+    qsh.laputa.mapper: trace
+  pattern:
+    console: "%p%m%n"
