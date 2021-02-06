@@ -241,7 +241,7 @@ class ApplicationTests {
      */
     @Test
     public void selectByLambda2() {
-        LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.<User>lambdaQuery();
+        LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.lambdaQuery();
         lambdaQueryWrapper.likeRight(User::getName, "王")
                 .and(qw -> qw.lt(User::getAge, 40).or().isNotNull(User::getEmail));
 
