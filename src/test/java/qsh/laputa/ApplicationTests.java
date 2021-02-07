@@ -67,6 +67,83 @@ class ApplicationTests {
     }
 
     /**
+     * 1、名字中包含雨并且年龄小于40
+     * name like '%雨%' and age<40
+     */
+    @Test
+    public void selectByWrapper1() {
+        //QueryWrapper<User> query = Wrappers.<User>query();
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("name", "雨").lt("age", 40);
+        List<User> userList = userMapper.selectList(queryWrapper);
+        userList.forEach(System.out::println);
+    }
+
+    /**
+     * 2、名字中包含雨年并且年龄大于等于20且小于等于40并且email不为空
+     * name like '%雨%' and age between 20 and 40 and email is not null
+     */
+    @Test
+    public void selectByWrapper2() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("name", "雨").between("age", 31, 32).isNotNull("email");
+        List<User> userList = userMapper.selectList(queryWrapper);
+        userList.forEach(System.out::println);
+    }
+
+    /**
+     * 3、名字为王姓或者年龄大于等于30，按照年龄降序排列，年龄相同按照id升序排列
+     * name like '王%' or age>=30 order by age desc,id asc
+     */
+    @Test
+    public void selectByWrapper3() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.likeRight("name", "王").or().ge("age", 30)
+                .orderByDesc("age").orderByAsc("id");
+        List<User> userList = userMapper.selectList(queryWrapper);
+        userList.forEach(System.out::println);
+    }
+
+    /**
+     * 4、创建日期为2021年1月14日并且直属上级为名字为王姓
+     * date_format(create_time,'%Y-%m-%d')='2021-01-14' and manager_id in (select id from user where name like '王%')
+     */
+    @Test
+    public void selectByWrapper4() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.apply("date_format(create_time,'%Y-%m-%d') = {0}", "2021-01-14")
+                .inSql("manager_id", "select id from user where name like '王%'");
+        List<User> userList = userMapper.selectList(queryWrapper);
+        userList.forEach(System.out::println);
+    }
+
+    /**
+     * 5、名字为刘姓并且（年龄小于32或邮箱不为空）
+     * name like '刘%' and (age<32 or email is not null)
+     */
+    @Test
+    public void selectByWrapper5() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.likeRight("name", "刘")
+                .and(qw -> qw.lt("age", 32).or().isNotNull("email"));
+        List<User> userList = userMapper.selectList(queryWrapper);
+        userList.forEach(System.out::println);
+    }
+
+    /**
+     * 6、名字为王姓或者（年龄小于40并且年龄大于20并且邮箱不为空）
+     * name like '王%' or (age<40 and age>20 and email is not null)
+     */
+    @Test
+    public void selectByWrapper6() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.likeRight("name", "王")
+                .or(qw -> qw.lt("age", 40).gt("age", 20).isNotNull("email"));
+        List<User> userList = userMapper.selectList(queryWrapper);
+        userList.forEach(System.out::println);
+    }
+
+    /**
      * 7、（年龄小于40或邮箱不为空）并且名字为王姓
      * (age<40 or email is not null) and name like '王%'
      */
