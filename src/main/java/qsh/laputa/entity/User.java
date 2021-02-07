@@ -1,13 +1,20 @@
 package qsh.laputa.entity;
 
-import com.baomidou.mybatisplus.annotation.SqlCondition;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 @Data
-public class User {
+@EqualsAndHashCode(callSuper = false)
+public class User extends Model<User> {
+
+    //private static final long serialVersionUID = 1L;
+
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     //@TableField(condition = SqlCondition.LIKE)

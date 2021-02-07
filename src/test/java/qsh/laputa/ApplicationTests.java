@@ -31,12 +31,6 @@ class ApplicationTests {
     private UserMapper userMapper;
 
     @Test
-    public void select() {
-        List<User> userList = userMapper.selectList(null);
-        userList.forEach(System.out::println);
-    }
-
-    @Test
     public void insert() {
         User user = new User();
         user.setName("不撞墙");
@@ -46,6 +40,12 @@ class ApplicationTests {
         user.setCreateTime(LocalDateTime.now());
         int rows = userMapper.insert(user);
         System.out.println("影响记录数：" + rows);
+    }
+
+    @Test
+    public void select() {
+        List<User> userList = userMapper.selectList(null);
+        userList.forEach(System.out::println);
     }
 
     @Test
@@ -464,6 +464,61 @@ class ApplicationTests {
         lambdaQueryWrapper.eq(User::getAge, 31).or().gt(User::getAge, 41);
         int rows = userMapper.delete(lambdaQueryWrapper);
         System.out.println("删除数：" + rows);
+    }
+
+    @Test
+    public void selectByAR() {
+        User user = new User();
+        user = user.selectById(1358318214458658818L);
+        System.out.println(user);
+    }
+
+    @Test
+    public void selectByAR2() {
+        User user = new User();
+        user.setId(1358318214458658818L);
+        User res = user.selectById();
+        System.out.println(res);
+        System.out.println(user);
+        System.out.println(res == user);
+    }
+
+    @Test
+    public void insertByAR() {
+        User user = new User();
+        user.setName("高凯旋");
+        user.setAge(34);
+        user.setEmail("gkx@baomidou.com");
+        user.setManagerId(1088248166370832385L);
+        user.setCreateTime(LocalDateTime.now());
+        boolean res = user.insert();
+        System.out.println(res);
+    }
+
+    @Test
+    public void updateByAR() {
+        User user = new User();
+        user.setId(1358318214458658818L);
+        user.setName("郭芮茗");
+        boolean res = user.updateById();
+        System.out.println(res);
+    }
+
+    @Test
+    public void insertOrUpdateByAR() {
+        User user = new User();
+        user.setId(1358324632242921473L);
+        user.setAge(28);
+        boolean res = user.insertOrUpdate();
+        System.out.println(res);
+    }
+
+    @Test
+    public void deleteByAR() {
+        User user = new User();
+        user.setId(1358317958346067970L);
+        boolean res = user.deleteById();
+        System.out.println(res);
     }
 
 }
