@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mysql.jdbc.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -330,6 +331,48 @@ class ApplicationTests {
     public void selectByLambda3() {
         List<User> userList = new LambdaQueryChainWrapper<>(userMapper)
                 .like(User::getName, "雨").ge(User::getAge, 20).list();
+        userList.forEach(System.out::println);
+    }
+
+    @Test
+    public void selectByCustom() {
+        LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.likeRight(User::getName, "王")
+                .and(qw -> qw.lt(User::getAge, 40).or().isNotNull(User::getEmail));
+
+        List<User> userList = userMapper.selectAll(lambdaQueryWrapper);
+        userList.forEach(System.out::println);
+    }
+
+    @Test
+    public void selectByPage() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ge("age", 26);
+
+        /*Page<Map<String, Object>> page = new Page<>(1, 2);
+        Page<Map<String, Object>> userPage = userMapper.selectMapsPage(page, queryWrapper);
+        List<Map<String, Object>> userList = userPage.getRecords();*/
+
+        Page<User> page = new Page<>(1, 2, false);
+        Page<User> userPage = userMapper.selectPage(page, queryWrapper);
+        List<User> userList = userPage.getRecords();
+
+        System.out.println("总页数：" + userPage.getPages());
+        System.out.println("总记录数：" + userPage.getTotal());
+        userList.forEach(System.out::println);
+    }
+
+    @Test
+    public void selectByCustomPage() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ge("age", 26);
+
+        Page<User> page = new Page<>(1, 2);
+        Page<User> userPage = userMapper.selectCustomPage(page, queryWrapper);
+        List<User> userList = userPage.getRecords();
+
+        System.out.println("总页数：" + userPage.getPages());
+        System.out.println("总记录数：" + userPage.getTotal());
         userList.forEach(System.out::println);
     }
 
