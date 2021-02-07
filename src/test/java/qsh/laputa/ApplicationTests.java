@@ -2,8 +2,11 @@ package qsh.laputa;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mysql.jdbc.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -374,6 +377,93 @@ class ApplicationTests {
         System.out.println("总页数：" + userPage.getPages());
         System.out.println("总记录数：" + userPage.getTotal());
         userList.forEach(System.out::println);
+    }
+
+    @Test
+    public void updateById() {
+        User user = new User();
+        user.setId(1088248166370832385L);
+        user.setAge(26);
+        int rows = userMapper.updateById(user);
+        System.out.println("更新数：" + rows);
+    }
+
+    @Test
+    public void updateByWrapper() {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("name", "李艺伟").eq("age", 28);
+        User user = new User();
+        user.setAge(29);
+        int rows = userMapper.update(user, updateWrapper);
+        System.out.println("更新数：" + rows);
+    }
+
+    @Test
+    public void updateByWrapper2() {
+        User whereUser = new User();
+        whereUser.setName("李艺伟");
+        whereUser.setAge(28);
+
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>(whereUser);
+        User user = new User();
+        user.setAge(29);
+        int rows = userMapper.update(user, updateWrapper);
+        System.out.println("更新数：" + rows);
+    }
+
+    @Test
+    public void updateByWrapper3() {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("name", "李艺伟").eq("age", 29).set("age", 30);
+
+        int rows = userMapper.update(null, updateWrapper);
+        System.out.println("更新数：" + rows);
+    }
+
+    @Test
+    public void updateByWrapperLambda() {
+        LambdaUpdateWrapper<User> lambdaUpdateWrapper = Wrappers.lambdaUpdate();
+        lambdaUpdateWrapper.eq(User::getName, "李艺伟").eq(User::getAge, 30).set(User::getAge, 31);
+
+        int rows = userMapper.update(null, lambdaUpdateWrapper);
+        System.out.println("更新数：" + rows);
+    }
+
+    @Test
+    public void updateByWrapperLambdaChain() {
+        boolean updateRes = new LambdaUpdateChainWrapper<>(userMapper)
+                .eq(User::getName, "李艺伟").eq(User::getAge, 31).set(User::getAge, 32).update();
+        System.out.println(updateRes);
+    }
+
+    @Test
+    public void deleteById() {
+        int rows = userMapper.deleteById(1357240242804973570L);
+        System.out.println("删除数：" + rows);
+    }
+
+    @Test
+    public void deleteByMap() {
+        Map<String, Object> columnMap = new HashMap<>();
+        columnMap.put("name", "撞西墙");//应为列名，而非字段名
+        columnMap.put("manager_id", 1088248166370832385L);
+        int rows = userMapper.deleteByMap(columnMap);
+        System.out.println("删除数：" + rows);
+    }
+
+    @Test
+    public void deleteBatchIds() {
+        int rows = userMapper.deleteBatchIds(Arrays.asList(1357232331961704449L,
+                1357235241131024385L, 1357237855574921217L));
+        System.out.println("删除数：" + rows);
+    }
+
+    @Test
+    public void deleteByWrapper() {
+        LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.eq(User::getAge, 31).or().gt(User::getAge, 41);
+        int rows = userMapper.delete(lambdaQueryWrapper);
+        System.out.println("删除数：" + rows);
     }
 
 }
