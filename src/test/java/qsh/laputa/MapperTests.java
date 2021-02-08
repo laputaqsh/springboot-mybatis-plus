@@ -25,7 +25,7 @@ import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-class ApplicationTests {
+class MapperTests {
 
     @Autowired
     private UserMapper userMapper;
