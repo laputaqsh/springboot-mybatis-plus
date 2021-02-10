@@ -9,7 +9,7 @@ mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
   global-config:
     db-config:
-      table-prefix: _
+      table-prefix: base_
 
 logging:
   level:
